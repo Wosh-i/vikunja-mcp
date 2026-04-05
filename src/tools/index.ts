@@ -1204,11 +1204,7 @@ export const taskTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         label_id: z
           .number()
           .int()
@@ -1245,11 +1241,7 @@ export const taskTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         labelId: z
           .number()
           .int()
@@ -1535,11 +1527,7 @@ export const taskTools: ToolDefinition[] = [
     name: "list_subtasks",
     description: "List all subtasks for a task",
     inputSchema: z.object({
-      taskId: z.coerce
-        .number()
-        .int()
-        .positive()
-        .describe("The ID of the parent task"),
+      taskId: z.number().int().positive().describe("The ID of the parent task"),
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
@@ -1578,11 +1566,7 @@ export const taskTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         attachmentId: z
           .number()
           .int()
@@ -1634,100 +1618,7 @@ export const commentTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
-        page: z
-          .number()
-          .int()
-          .positive()
-          .optional()
-          .describe("Page number for pagination"),
-        per_page: z
-          .number()
-          .int()
-          .positive()
-          .max(100)
-          .optional()
-          .describe("Number of items per page (max 100)"),
-      }),
-      "inputSchema",
-    ),
-    handler: async (client, args) => {
-      try {
-        const parsed = listCommentsSchema.parse(args);
-        const params = new URLSearchParams();
-        if (parsed.page) params.set("page", String(parsed.page));
-        if (parsed.per_page) params.set("per_page", String(parsed.per_page));
-
-        const queryString = params.toString();
-        const path = `/tasks/${parsed.taskId}/comments${queryString ? `?${queryString}` : ""}`;
-        const result = await client.getList<unknown>(path);
-
-        return {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-        };
-      } catch (error) {
-        return handleError(error);
-      }
-    },
-  },
-  {
-    name: "create_comment",
-    description: "Create a comment on a task",
-    inputSchema: z.object({
-      taskId: z.number().int().positive().describe("The ID of the task"),
-      comment: z.string().min(1).describe("The comment text"),
-    }),
-    jsonSchema: zodToJsonSchema(
-      z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
-        comment: z.string().min(1).describe("The comment text"),
-      }),
-      "inputSchema",
-    ),
-    handler: async (client, args) => {
-      try {
-        const parsed = createCommentSchema.parse(args);
-        const result = await client.put<unknown>(
-          `/tasks/${parsed.taskId}/comments`,
-          {
-            comment: parsed.comment,
-          },
-        );
-        return {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-        };
-      } catch (error) {
-        return handleError(error);
-      }
-    },
-  },
-  {
-    name: "update_comment",
-    description: "Update a comment on a task",
-    inputSchema: z.object({
-      taskId: z.number().int().positive().describe("The ID of the task"),
-      commentId: z.coerce
-        .number()
-        .int()
-        .positive()
-        .describe("The ID of the comment"),
-      comment: z.string().min(1).describe("The updated comment text"),
-    }),
-    jsonSchema: zodToJsonSchema(
-      z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         commentId: z
           .number()
           .int()
@@ -1765,11 +1656,7 @@ export const commentTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         commentId: z
           .number()
           .int()
@@ -1829,11 +1716,7 @@ export const relationTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         otherTaskId: z
           .number()
           .int()
@@ -1905,11 +1788,7 @@ export const relationTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         otherTaskId: z
           .number()
           .int()
@@ -1972,11 +1851,7 @@ export const attachmentTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         page: z
           .number()
           .int()
