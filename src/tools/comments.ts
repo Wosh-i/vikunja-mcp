@@ -1,25 +1,25 @@
 import { z } from "zod";
 
 export const listCommentsSchema = z.object({
-  taskId: z.number().int().positive(),
-  page: z.number().int().positive().optional(),
-  per_page: z.number().int().positive().max(100).optional(),
+  taskId: z.coerce.number().int().positive(),
+  page: z.coerce.number().int().positive().optional(),
+  per_page: z.coerce.number().int().positive().max(100).optional(),
 });
 
 export const createCommentSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: z.coerce.number().int().positive(),
   comment: z.string().min(1),
 });
 
 export const updateCommentSchema = z.object({
-  taskId: z.number().int().positive(),
-  commentId: z.number().int().positive(),
+  taskId: z.coerce.number().int().positive(),
+  commentId: z.coerce.number().int().positive(),
   comment: z.string().min(1),
 });
 
 export const deleteCommentSchema = z.object({
-  taskId: z.number().int().positive(),
-  commentId: z.number().int().positive(),
+  taskId: z.coerce.number().int().positive(),
+  commentId: z.coerce.number().int().positive(),
 });
 
 export type ListCommentsInput = z.infer<typeof listCommentsSchema>;

@@ -8,17 +8,17 @@ const baseProjectSchema = z.object({
     .regex(/^#[0-9A-Fa-f]{6}$/)
     .optional(),
   identifier: z.string().max(10).optional(),
-  parent_project_id: z.number().int().positive().optional(),
+  parent_project_id: z.coerce.number().int().positive().optional(),
   is_archived: z.boolean().optional(),
 });
 
 export const listProjectsSchema = z.object({
-  page: z.number().int().positive().optional(),
-  per_page: z.number().int().positive().max(100).optional(),
+  page: z.coerce.number().int().positive().optional(),
+  per_page: z.coerce.number().int().positive().max(100).optional(),
 });
 
 export const getProjectSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: z.coerce.number().int().positive(),
 });
 
 export const createProjectSchema = baseProjectSchema;
@@ -30,15 +30,15 @@ export const updateProjectSchema = baseProjectSchema
   .partial();
 
 export const deleteProjectSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: z.coerce.number().int().positive(),
 });
 
 export const listProjectChildrenSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: z.coerce.number().int().positive(),
 });
 
 export const moveProjectSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: z.coerce.number().int().positive(),
   parent_project_id: z
     .number()
     .int()
