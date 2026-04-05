@@ -223,9 +223,6 @@ List all tasks for a specific project.
 - **Optional**:
   - `page` (number): Page number for pagination
   - `per_page` (number): Number of items per page
-  - `status` (string): Filter by status
-  - `priority` (number): Filter by priority
-  - `due_date` (string): Filter by due date
 
 #### get_task
 
@@ -240,17 +237,21 @@ Create a new task in a project.
 
 - **Parameters**:
   - `projectId` (number, required): The project ID
-  - `title` (string, required): The task title
+- **Required**:
+  - `task` (object): The task object
+    - `title` (string, required): The task title
 - **Optional**:
-  - `description` (string): Task description
-  - `priority` (number): Priority (1-5, where 5 is highest)
-  - `due_date` (string): Due date (ISO 8601 format)
-  - `start_date` (string): Start date
-  - `end_date` (string): End date
-  - `estimated_time` (string): Estimated time (e.g., "3h")
-  - `repeat_after` (number): Repeat after X minutes
-  - `hex_color` (string): Task color
-  - `is_archived` (boolean): Archive status
+  - `task` (object): The task object
+    - `description` (string): Task description
+    - `done` (boolean): Whether task is completed
+    - `due_date` (string): Due date (ISO 8601 format)
+    - `start_date` (string): Start date
+    - `end_date` (string): End date
+    - `hex_color` (string): Task color
+    - `priority` (number): Priority (1-5, where 5 is highest)
+    - `percent_done` (number): Progress (0-100)
+    - `repeat_after` (number): Repeat after X minutes
+    - `repeat_mode` (number): Repeat mode (0=relative, 1=absolute)
 
 #### update_task
 
@@ -258,19 +259,20 @@ Update an existing task.
 
 - **Parameters**:
   - `taskId` (number, required): The task ID
+  - `taskUpdates` (object, required): The task fields to update
 - **Optional**:
-  - `title` (string): New title
-  - `description` (string): New description
-  - `project_id` (number): Move to different project
-  - `priority` (number): New priority
-  - `due_date` (string): New due date
-  - `start_date` (string): New start date
-  - `end_date` (string): New end date
-  - `estimated_time` (string): New estimated time
-  - `repeat_after` (number): New repeat interval
-  - `hex_color` (string): New color
-  - `is_archived` (boolean): Archive status
-  - `percent_done` (number): Progress (0-100)
+  - `taskUpdates` (object):
+    - `title` (string): New title
+    - `description` (string): New description
+    - `done` (boolean): Completion status
+    - `due_date` (string): New due date
+    - `start_date` (string): New start date
+    - `end_date` (string): New end date
+    - `hex_color` (string): New color
+    - `priority` (number): New priority
+    - `percent_done` (number): Progress (0-100)
+    - `repeat_after` (number): New repeat interval
+    - `repeat_mode` (number): Repeat mode (0=relative, 1=absolute)
 
 #### delete_task
 
@@ -301,8 +303,8 @@ Move task to different project or position.
 
 - **Parameters**:
   - `taskId` (number, required): The task ID
+  - `project_id` (number, required): Target project ID
 - **Optional**:
-  - `project_id` (number): Target project ID
   - `position` (number): New position
 
 ### Assignees
@@ -338,7 +340,7 @@ Add a label to a task.
 
 - **Parameters**:
   - `taskId` (number, required): The task ID
-  - `labelId` (number, required): The label ID to add
+  - `label_id` (number, required): The label ID to add
 
 #### remove_task_label
 
@@ -346,7 +348,7 @@ Remove a label from a task.
 
 - **Parameters**:
   - `taskId` (number, required): The task ID
-  - `labelId` (number, required): The label ID to remove
+  - `label_id` (number, required): The label ID to remove
 
 #### list_task_labels
 
@@ -361,6 +363,7 @@ List all available labels (globally).
 
 - **Parameters**: None required
 - **Optional**:
+  - `project_id` (number): Filter by project ID
   - `page` (number): Page number
   - `per_page` (number): Items per page
 
@@ -409,8 +412,8 @@ Create a relation between two tasks.
 
 - **Parameters**:
   - `taskId` (number, required): The source task ID
-  - `related_task_id` (number, required): The related task ID
-  - `relation_type` (string, required): Relation type (blocks, blockedby, duplicated, duplicatedby, relates, subtask)
+  - `otherTaskId` (number, required): The related task ID
+  - `relationKind` (string, required): Relation type (unknown, subtask, parenttask, related, duplicateof, duplicates, blocking, blocked, precedes, follows, copiedfrom, copiedto)
 
 #### delete_relation
 
@@ -418,7 +421,8 @@ Delete a relation between tasks.
 
 - **Parameters**:
   - `taskId` (number, required): The source task ID
-  - `related_task_id` (number, required): The related task ID
+  - `otherTaskId` (number, required): The related task ID
+  - `relationKind` (string, required): Relation type (unknown, subtask, parenttask, related, duplicateof, duplicates, blocking, blocked, precedes, follows, copiedfrom, copiedto)
 
 #### list_task_relations
 
@@ -434,12 +438,24 @@ List all relations for a task.
 Create a subtask linked to parent task.
 
 - **Parameters**:
-  - `taskId` (number, required): The parent task ID
-  - `title` (string, required): The subtask title
+  - `projectId` (number, required): The project ID
+  - `parent_task_id` (number, required): The parent task ID
+  - `task` (object, required): The subtask object
+- **Required**:
+  - `task` (object):
+    - `title` (string, required): The subtask title
 - **Optional**:
-  - `description` (string): Subtask description
-  - `priority` (number): Priority
-  - `due_date` (string): Due date
+  - `task` (object):
+    - `description` (string): Subtask description
+    - `done` (boolean): Whether subtask is completed
+    - `due_date` (string): Due date
+    - `start_date` (string): Start date
+    - `end_date` (string): End date
+    - `hex_color` (string): Subtask color
+    - `priority` (number): Priority
+    - `percent_done` (number): Progress (0-100)
+    - `repeat_after` (number): Repeat after X minutes
+    - `repeat_mode` (number): Repeat mode (0=relative, 1=absolute)
 
 #### list_subtasks
 
@@ -543,7 +559,7 @@ Adds a comment to task 3.
 ### Relations
 
 ```
-create_relation taskId: 1 related_task_id: 2 relation_type: "blocks"
+create_relation taskId: 1 otherTaskId: 2 relationKind: "blocking"
 ```
 
 Creates a "blocks" relation from task 1 to task 2 (task 1 blocks task 2).
