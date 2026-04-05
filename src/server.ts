@@ -26,18 +26,16 @@ export class MCPServer {
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
       try {
         const toolsList = tools.map((tool) => {
-          const schema = tool.jsonSchema?.inputSchema;
-          if (!schema) {
-            return {
-              name: tool.name,
-              description: tool.description,
-              inputSchema: { type: "object", properties: {}, required: [] },
-            };
-          }
+          const schema =
+            tool.jsonSchema?.definitions?.inputSchema || tool.jsonSchema;
           return {
             name: tool.name,
             description: tool.description,
-            inputSchema: schema,
+            inputSchema: schema || {
+              type: "object",
+              properties: {},
+              required: [],
+            },
           };
         });
 
