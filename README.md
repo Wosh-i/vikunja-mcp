@@ -2,6 +2,28 @@
 
 A Model Context Protocol server for managing Vikunja projects and tasks.
 
+## Quick Start
+
+Run directly with npx (no installation required):
+
+```bash
+npx vikunja-mcp --token YOUR_VIKUNJA_TOKEN
+```
+
+With custom Vikunja URL:
+
+```bash
+npx vikunja-mcp --url https://your-vikunja.com/api/v1 --token YOUR_TOKEN
+```
+
+Or using environment variables:
+
+```bash
+export VIKUNJA_TOKEN=your_token
+export VIKUNJA_URL=https://your-vikunja.com/api/v1
+npx vikunja-mcp
+```
+
 ## Features
 
 - Full CRUD operations for projects
@@ -112,7 +134,7 @@ A Model Context Protocol server for managing Vikunja projects and tasks.
 ### Build from Source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/vikunja-mcp.git
+git clone https://github.com/Wosh-i/vikunja-mcp.git
 cd vikunja-mcp
 npm install
 npm run build
@@ -169,6 +191,16 @@ Then the OpenCode config can be simpler:
 ```
 
 ## Usage
+
+### CLI Options
+
+| Option    | Alias | Description               |
+| --------- | ----- | ------------------------- |
+| `--token` | `-t`  | Your Vikunja API token    |
+| `--url`   | `-u`  | Your Vikunja API base URL |
+| `--help`  | `-h`  | Show help                 |
+
+### Using with OpenCode
 
 After configuration, you can use Vikunja tools in OpenCode:
 

@@ -4,10 +4,13 @@
   "description": "Model Context Protocol server for Vikunja API",
   "main": "dist/index.js",
   "type": "module",
+  "bin": {
+    "vikunja-mcp": "./cli.js"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/vikunja-mcp.git"
+    "url": "https://github.com/Wosh-i/vikunja-mcp.git"
   },
   "keywords": [
     "mcp",
@@ -19,6 +22,7 @@
   ],
   "author": "",
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
