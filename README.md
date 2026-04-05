@@ -686,6 +686,181 @@ Then the OpenCode config can be simpler:
 }
 ```
 
+## Claude Code Desktop App Configuration
+
+### Option 1: Using npx (Recommended)
+
+The easiest way to configure Vikunja MCP is using npx. Add this to your Claude Code desktop config file:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+```jsonc
+{
+  "mcpServers": {
+    "vikunja": {
+      "command": "npx",
+      "args": ["-y", "vikunja-mcp"],
+      "env": {
+        "VIKUNJA_URL": "https://your-vikunja-instance.com/api/v1",
+        "VIKUNJA_TOKEN": "your-api-token-here",
+      },
+    },
+  },
+}
+```
+
+Using npx with `-y` skips the confirmation prompt and automatically downloads the package.
+
+### Option 2: Build from Source
+
+If you prefer to run locally without npx, build from source:
+
+```bash
+git clone https://github.com/Wosh-i/vikunja-mcp.git
+cd vikunja-mcp
+npm install
+npm run build
+```
+
+Then configure Claude Code:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+```jsonc
+{
+  "mcpServers": {
+    "vikunja": {
+      "command": "node",
+      "args": ["/path/to/vikunja-mcp/dist/index.js"],
+      "env": {
+        "VIKUNJA_URL": "https://your-vikunja-instance.com/api/v1",
+        "VIKUNJA_TOKEN": "your-api-token-here",
+      },
+    },
+  },
+}
+```
+
+### Configuration Options
+
+| Option          | Required | Default                       | Description               |
+| --------------- | -------- | ----------------------------- | ------------------------- |
+| `VIKUNJA_URL`   | No       | https://try.vikunja.io/api/v1 | Your Vikunja API base URL |
+| `VIKUNJA_TOKEN` | Yes      | -                             | Your Vikunja API token    |
+
+### Environment Variables
+
+You can also set environment variables globally in your shell:
+
+```bash
+export VIKUNJA_URL="https://your-vikunja-instance.com/api/v1"
+export VIKUNJA_TOKEN="your-api-token-here"
+```
+
+Then the Claude Code config can be simpler:
+
+```jsonc
+{
+  "mcpServers": {
+    "vikunja": {
+      "command": "node",
+      "args": ["/path/to/vikunja-mcp/dist/index.js"],
+    },
+  },
+}
+```
+
+## Claude Code TUI Configuration
+
+The Claude Code TUI (terminal user interface) uses the `claude mcp add` command to configure MCP servers.
+
+### Option 1: Using npx (Recommended)
+
+The easiest way to configure Vikunja MCP is using npx:
+
+```bash
+claude mcp add --transport stdio --env VIKUNJA_URL=https://your-vikunja-instance.com/api/v1 --env VIKUNJA_TOKEN=your-api-token-here vikunja -- npx -y vikunja-mcp
+```
+
+### Option 2: Build from Source
+
+If you prefer to run locally without npx, build from source:
+
+```bash
+git clone https://github.com/Wosh-i/vikunja-mcp.git
+cd vikunja-mcp
+npm install
+npm run build
+```
+
+Then configure Claude Code:
+
+```bash
+claude mcp add --transport stdio --env VIKUNJA_URL=https://your-vikunja-instance.com/api/v1 --env VIKUNJA_TOKEN=your-api-token-here vikunja -- /path/to/vikunja-mcp/dist/index.js
+```
+
+### Configuration Scopes
+
+Claude Code TUI supports different scopes for MCP server configuration:
+
+| Scope             | Config Location                     | Description                                            |
+| ----------------- | ----------------------------------- | ------------------------------------------------------ |
+| `user`            | `~/.claude.json`                    | Available to you across all projects                   |
+| `local` (default) | `~/.claude.json` under project path | Available only in the current project                  |
+| `project`         | `.mcp.json` in project root         | Shared with team members (checked into source control) |
+
+```bash
+# Add with user scope (available across all projects)
+claude mcp add --transport stdio --scope user --env VIKUNJA_TOKEN=... vikunja -- npx -y vikunja-mcp
+
+# Add with project scope (shared with team via .mcp.json)
+claude mcp add --transport stdio --scope project --env VIKUNJA_TOKEN=... vikunja -- npx -y vikunja-mcp
+```
+
+### Managing MCP Servers
+
+```bash
+# List all configured servers
+claude mcp list
+
+# Get details for a specific server
+claude mcp get vikunja
+
+# Remove a server
+claude mcp remove vikunja
+
+# Within Claude Code, check server status
+/mcp
+```
+
+### Configuration Options
+
+| Option          | Required | Default                       | Description               |
+| --------------- | -------- | ----------------------------- | ------------------------- |
+| `VIKUNJA_URL`   | No       | https://try.vikunja.io/api/v1 | Your Vikunja API base URL |
+| `VIKUNJA_TOKEN` | Yes      | -                             | Your Vikunja API token    |
+
+### Environment Variables
+
+You can also set environment variables globally in your shell:
+
+```bash
+export VIKUNJA_URL="https://your-vikunja-instance.com/api/v1"
+export VIKUNJA_TOKEN="your-api-token-here"
+```
+
+Then the configuration is simpler:
+
+```bash
+claude mcp add --transport stdio vikunja -- npx -y vikunja-mcp
+```
+
+---
+
 ## Usage
 
 ### CLI Options
