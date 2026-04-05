@@ -1,0 +1,40 @@
+import { z } from "zod";
+
+const baseProjectSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+  hex_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  identifier: z.string().max(10).optional(),
+  parent_project_id: z.number().int().positive().optional(),
+  is_archived: z.boolean().optional(),
+});
+
+export const listProjectsSchema = z.object({
+  page: z.number().int().positive().optional(),
+  per_page: z.number().int().positive().max(100).optional(),
+});
+
+export const getProjectSchema = z.object({
+  projectId: z.number().int().positive(),
+});
+
+export const createProjectSchema = baseProjectSchema;
+
+export const updateProjectSchema = baseProjectSchema
+  .extend({
+    is_favorite: z.boolean().optional(),
+  })
+  .partial();
+
+export const deleteProjectSchema = z.object({
+  projectId: z.number().int().positive(),
+});
+
+export type ListProjectsInput = z.infer<typeof listProjectsSchema>;
+export type GetProjectInput = z.infer<typeof getProjectSchema>;
+export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+export type DeleteProjectInput = z.infer<typeof deleteProjectSchema>;
