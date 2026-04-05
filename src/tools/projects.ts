@@ -33,6 +33,26 @@ export const deleteProjectSchema = z.object({
   projectId: z.number().int().positive(),
 });
 
+export const listProjectChildrenSchema = z.object({
+  projectId: z.number().int().positive(),
+});
+
+export const moveProjectSchema = z.object({
+  projectId: z.number().int().positive(),
+  parent_project_id: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .describe("The ID of the new parent project"),
+  position: z
+    .number()
+    .int()
+    .nonnegative()
+    .optional()
+    .describe("The position in the parent project"),
+});
+
 export type ListProjectsInput = z.infer<typeof listProjectsSchema>;
 export type GetProjectInput = z.infer<typeof getProjectSchema>;
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

@@ -7,6 +7,8 @@ import {
   createProjectSchema,
   updateProjectSchema,
   deleteProjectSchema,
+  listProjectChildrenSchema,
+  moveProjectSchema,
 } from "./projects.js";
 import {
   listTasksSchema,
@@ -15,6 +17,19 @@ import {
   createTaskSchema,
   updateTaskSchema,
   deleteTaskSchema,
+  completeTaskSchema,
+  reopenTaskSchema,
+  moveTaskSchema,
+  addTaskAssigneeSchema,
+  removeTaskAssigneeSchema,
+  listTaskAssigneesSchema,
+  addTaskLabelSchema,
+  removeTaskLabelSchema,
+  listTaskLabelsSchema,
+  listLabelsSchema,
+  listTaskRelationsSchema,
+  listSubtasksSchema,
+  deleteTaskAttachmentSchema,
 } from "./tasks.js";
 import {
   listCommentsSchema,
@@ -339,6 +354,102 @@ export const projectTools: ToolDefinition[] = [
               text: `Project ${parsed.projectId} deleted successfully`,
             },
           ],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "list_project_children",
+    description: "List all child projects of a project",
+    inputSchema: z.object({
+      projectId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the parent project"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        projectId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the parent project"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = listProjectChildrenSchema.parse(args);
+        const result = await client.getList<unknown>(
+          `/projects/${parsed.projectId}/projects`,
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "move_project",
+    description: "Move a project to a different parent or position",
+    inputSchema: z.object({
+      projectId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the project to move"),
+      parent_project_id: z
+        .number()
+        .int()
+        .positive()
+        .optional()
+        .describe("The ID of the new parent project (null to move to root)"),
+      position: z
+        .number()
+        .int()
+        .nonnegative()
+        .optional()
+        .describe("The position in the parent project"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        projectId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the project to move"),
+        parent_project_id: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe("The ID of the new parent project (null to move to root)"),
+        position: z
+          .number()
+          .int()
+          .nonnegative()
+          .optional()
+          .describe("The position in the parent project"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = moveProjectSchema.parse(args);
+        const result = await client.post<unknown>(
+          `/projects/${parsed.projectId}/move`,
+          {
+            parent_project_id: parsed.parent_project_id,
+            position: parsed.position,
+          },
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
         };
       } catch (error) {
         return handleError(error);
@@ -843,6 +954,638 @@ export const taskTools: ToolDefinition[] = [
             {
               type: "text",
               text: `Task ${parsed.taskId} deleted successfully`,
+            },
+          ],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "complete_task",
+    description: "Mark a task as done",
+    inputSchema: z.object({
+      taskId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the task to mark as done"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the task to mark as done"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = completeTaskSchema.parse(args);
+        const result = await client.post<unknown>(
+          `/tasks/${parsed.taskId}/complete`,
+          {},
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "reopen_task",
+    description: "Reopen a completed task",
+    inputSchema: z.object({
+      taskId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the task to reopen"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the task to reopen"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = reopenTaskSchema.parse(args);
+        const result = await client.post<unknown>(
+          `/tasks/${parsed.taskId}/reopen`,
+          {},
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "move_task",
+    description: "Move a task to a different project or position",
+    inputSchema: z.object({
+      taskId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the task to move"),
+      project_id: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the target project"),
+      position: z
+        .number()
+        .int()
+        .nonnegative()
+        .optional()
+        .describe("The position in the target project"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the task to move"),
+        project_id: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the target project"),
+        position: z
+          .number()
+          .int()
+          .nonnegative()
+          .optional()
+          .describe("The position in the target project"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = moveTaskSchema.parse(args);
+        const result = await client.post<unknown>(
+          `/tasks/${parsed.taskId}/move`,
+          {
+            project_id: parsed.project_id,
+            position: parsed.position,
+          },
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "add_task_assignee",
+    description: "Add a user as assignee to a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+      user_id: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the user to add as assignee"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+        user_id: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the user to add as assignee"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = addTaskAssigneeSchema.parse(args);
+        const result = await client.put<unknown>(
+          `/tasks/${parsed.taskId}/assignees`,
+          { user_id: parsed.user_id },
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "remove_task_assignee",
+    description: "Remove a user from task assignees",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+      userId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the user to remove"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+        userId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the user to remove"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = removeTaskAssigneeSchema.parse(args);
+        await client.delete<unknown>(
+          `/tasks/${parsed.taskId}/assignees/${parsed.userId}`,
+        );
+        return {
+          content: [{ type: "text", text: "Assignee removed successfully" }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "list_task_assignees",
+    description: "List all assignees for a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = listTaskAssigneesSchema.parse(args);
+        const result = await client.getList<unknown>(
+          `/tasks/${parsed.taskId}/assignees`,
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "add_task_label",
+    description: "Add a label to a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+      label_id: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the label to add"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+        label_id: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the label to add"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = addTaskLabelSchema.parse(args);
+        const result = await client.put<unknown>(
+          `/tasks/${parsed.taskId}/labels`,
+          { label_id: parsed.label_id },
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "remove_task_label",
+    description: "Remove a label from a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+      labelId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the label to remove"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+        labelId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the label to remove"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = removeTaskLabelSchema.parse(args);
+        await client.delete<unknown>(
+          `/tasks/${parsed.taskId}/labels/${parsed.labelId}`,
+        );
+        return {
+          content: [{ type: "text", text: "Label removed successfully" }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "list_task_labels",
+    description: "List all labels for a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = listTaskLabelsSchema.parse(args);
+        const result = await client.getList<unknown>(
+          `/tasks/${parsed.taskId}/labels`,
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "list_labels",
+    description: "List all available labels",
+    inputSchema: z.object({
+      project_id: z
+        .number()
+        .int()
+        .positive()
+        .optional()
+        .describe("Filter labels by project ID"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        project_id: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe("Filter labels by project ID"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = listLabelsSchema.parse(args);
+        const params = new URLSearchParams();
+        if (parsed.project_id)
+          params.set("project_id", String(parsed.project_id));
+
+        const queryString = params.toString();
+        const path = `/labels${queryString ? `?${queryString}` : ""}`;
+        const result = await client.getList<unknown>(path);
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "list_task_relations",
+    description: "List all relations for a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = listTaskRelationsSchema.parse(args);
+        const result = await client.getList<unknown>(
+          `/tasks/${parsed.taskId}/relations`,
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "create_subtask",
+    description: "Create a subtask under a parent task",
+    inputSchema: z.object({
+      projectId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the project for the subtask"),
+      task: z
+        .object({
+          title: z.string().min(1).describe("Subtask title"),
+          description: z.string().optional().describe("Subtask description"),
+          done: z.boolean().optional().describe("Whether the subtask is done"),
+          due_date: z
+            .string()
+            .datetime()
+            .optional()
+            .describe("Due date (ISO 8601 format)"),
+          start_date: z
+            .string()
+            .datetime()
+            .optional()
+            .describe("Start date (ISO 8601 format)"),
+          end_date: z
+            .string()
+            .datetime()
+            .optional()
+            .describe("End date (ISO 8601 format)"),
+          hex_color: z
+            .string()
+            .regex(/^#[0-9A-Fa-f]{6}$/)
+            .optional()
+            .describe("Hex color code (e.g. #FF0000)"),
+          priority: z
+            .number()
+            .int()
+            .min(0)
+            .max(5)
+            .optional()
+            .describe("Priority (0-5)"),
+          percent_done: z
+            .number()
+            .int()
+            .min(0)
+            .max(100)
+            .optional()
+            .describe("Progress percentage (0-100)"),
+          repeat_after: z
+            .number()
+            .int()
+            .nonnegative()
+            .optional()
+            .describe("Repeat after duration in seconds"),
+          repeat_mode: z
+            .number()
+            .int()
+            .min(0)
+            .max(2)
+            .optional()
+            .describe("Repeat mode (0, 1, or 2)"),
+        })
+        .describe("Subtask data"),
+      parent_task_id: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the parent task"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        projectId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the project for the subtask"),
+        task: z
+          .object({
+            title: z.string().min(1).describe("Subtask title"),
+            description: z.string().optional().describe("Subtask description"),
+            done: z
+              .boolean()
+              .optional()
+              .describe("Whether the subtask is done"),
+            due_date: z
+              .string()
+              .datetime()
+              .optional()
+              .describe("Due date (ISO 8601 format)"),
+            start_date: z
+              .string()
+              .datetime()
+              .optional()
+              .describe("Start date (ISO 8601 format)"),
+            end_date: z
+              .string()
+              .datetime()
+              .optional()
+              .describe("End date (ISO 8601 format)"),
+            hex_color: z
+              .string()
+              .regex(/^#[0-9A-Fa-f]{6}$/)
+              .optional()
+              .describe("Hex color code (e.g. #FF0000)"),
+            priority: z
+              .number()
+              .int()
+              .min(0)
+              .max(5)
+              .optional()
+              .describe("Priority (0-5)"),
+            percent_done: z
+              .number()
+              .int()
+              .min(0)
+              .max(100)
+              .optional()
+              .describe("Progress percentage (0-100)"),
+            repeat_after: z
+              .number()
+              .int()
+              .nonnegative()
+              .optional()
+              .describe("Repeat after duration in seconds"),
+            repeat_mode: z
+              .number()
+              .int()
+              .min(0)
+              .max(2)
+              .optional()
+              .describe("Repeat mode (0, 1, or 2)"),
+          })
+          .describe("Subtask data"),
+        parent_task_id: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the parent task"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const { projectId, task, parent_task_id } = args as {
+          projectId: number;
+          task: Record<string, unknown>;
+          parent_task_id: number;
+        };
+        const taskResult = await client.put<unknown>(
+          `/projects/${projectId}/tasks`,
+          task,
+        );
+        const result = await client.put<unknown>(
+          `/tasks/${parent_task_id}/relations`,
+          {
+            other_task_id: (taskResult as { id: number }).id,
+            relation_kind: "subtask",
+          },
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "list_subtasks",
+    description: "List all subtasks for a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the parent task"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the parent task"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = listSubtasksSchema.parse(args);
+        const result = await client.getList<unknown>(
+          `/tasks/${parsed.taskId}/relations?kind=subtask`,
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "delete_task_attachment",
+    description: "Delete an attachment from a task",
+    inputSchema: z.object({
+      taskId: z.number().int().positive().describe("The ID of the task"),
+      attachmentId: z
+        .number()
+        .int()
+        .positive()
+        .describe("The ID of the attachment to delete"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: z.number().int().positive().describe("The ID of the task"),
+        attachmentId: z
+          .number()
+          .int()
+          .positive()
+          .describe("The ID of the attachment to delete"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = deleteTaskAttachmentSchema.parse(args);
+        await client.delete<unknown>(
+          `/tasks/${parsed.taskId}/attachments/${parsed.attachmentId}`,
+        );
+        return {
+          content: [
+            {
+              type: "text",
+              text: "Attachment deleted successfully",
             },
           ],
         };

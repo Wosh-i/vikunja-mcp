@@ -61,6 +61,83 @@ export const deleteTaskSchema = z.object({
   taskId: z.number().int().positive(),
 });
 
+export const completeTaskSchema = z.object({
+  taskId: z.number().int().positive(),
+});
+
+export const reopenTaskSchema = z.object({
+  taskId: z.number().int().positive(),
+});
+
+export const moveTaskSchema = z.object({
+  taskId: z.number().int().positive(),
+  project_id: z
+    .number()
+    .int()
+    .positive()
+    .describe("The ID of the target project"),
+  position: z
+    .number()
+    .int()
+    .nonnegative()
+    .optional()
+    .describe("The position in the target project"),
+});
+
+export const addTaskAssigneeSchema = z.object({
+  taskId: z.number().int().positive(),
+  user_id: z
+    .number()
+    .int()
+    .positive()
+    .describe("The ID of the user to add as assignee"),
+});
+
+export const removeTaskAssigneeSchema = z.object({
+  taskId: z.number().int().positive(),
+  userId: z.number().int().positive(),
+});
+
+export const listTaskAssigneesSchema = z.object({
+  taskId: z.number().int().positive(),
+});
+
+export const addTaskLabelSchema = z.object({
+  taskId: z.number().int().positive(),
+  label_id: z.number().int().positive().describe("The ID of the label to add"),
+});
+
+export const removeTaskLabelSchema = z.object({
+  taskId: z.number().int().positive(),
+  labelId: z.number().int().positive(),
+});
+
+export const listTaskLabelsSchema = z.object({
+  taskId: z.number().int().positive(),
+});
+
+export const listLabelsSchema = z.object({
+  project_id: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .describe("Filter labels by project ID"),
+});
+
+export const listTaskRelationsSchema = z.object({
+  taskId: z.number().int().positive(),
+});
+
+export const listSubtasksSchema = z.object({
+  taskId: z.number().int().positive(),
+});
+
+export const deleteTaskAttachmentSchema = z.object({
+  taskId: z.number().int().positive(),
+  attachmentId: z.number().int().positive(),
+});
+
 export type ListTasksInput = z.infer<typeof listTasksSchema>;
 export type ListProjectTasksInput = z.infer<typeof listProjectTasksSchema>;
 export type GetTaskInput = z.infer<typeof getTaskSchema>;
