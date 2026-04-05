@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+const idField = () =>
+  z.union([
+    z.number().int().positive(),
+    z
+      .string()
+      .min(1, { message: "Required" })
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val) && val > 0, {
+        message: "Must be a positive number",
+      }),
+  ]);
+
 const baseTaskSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
@@ -28,13 +40,13 @@ export const listTasksSchema = z.object({
 });
 
 export const listProjectTasksSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: idField(),
   page: z.number().int().positive().optional(),
   per_page: z.number().int().positive().max(100).optional(),
 });
 
 export const getTaskSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
   expand: z
     .enum([
       "labels",
@@ -48,34 +60,30 @@ export const getTaskSchema = z.object({
 });
 
 export const createTaskSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: idField(),
   task: baseTaskSchema,
 });
 
 export const updateTaskSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
   taskUpdates: baseTaskSchema.partial(),
 });
 
 export const deleteTaskSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const completeTaskSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const reopenTaskSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const moveTaskSchema = z.object({
-  taskId: z.number().int().positive(),
-  project_id: z
-    .number()
-    .int()
-    .positive()
-    .describe("The ID of the target project"),
+  taskId: idField(),
+  project_id: idField().describe("The ID of the target project"),
   position: z
     .number()
     .int()
@@ -85,39 +93,31 @@ export const moveTaskSchema = z.object({
 });
 
 export const addTaskAssigneeSchema = z.object({
-  taskId: z.number().int().positive(),
-  user_id: z
-    .number()
-    .int()
-    .positive()
-    .describe("The ID of the user to add as assignee"),
+  taskId: idField(),
+  user_id: idField().describe("The ID of the user to add as assignee"),
 });
 
 export const removeTaskAssigneeSchema = z.object({
-  taskId: z.number().int().positive(),
-  userId: z.number().int().positive(),
+  taskId: idField(),
+  userId: idField(),
 });
 
 export const listTaskAssigneesSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const addTaskLabelSchema = z.object({
-  taskId: z.number().int().positive(),
-  label_id: z.coerce
-    .number()
-    .int()
-    .positive()
-    .describe("The ID of the label to add"),
+  taskId: idField(),
+  label_id: idField().describe("The ID of the label to add"),
 });
 
 export const removeTaskLabelSchema = z.object({
-  taskId: z.number().int().positive(),
-  labelId: z.number().int().positive(),
+  taskId: idField(),
+  labelId: idField(),
 });
 
 export const listTaskLabelsSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const listLabelsSchema = z.object({
@@ -130,16 +130,16 @@ export const listLabelsSchema = z.object({
 });
 
 export const listTaskRelationsSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const listSubtasksSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
 });
 
 export const deleteTaskAttachmentSchema = z.object({
-  taskId: z.number().int().positive(),
-  attachmentId: z.number().int().positive(),
+  taskId: idField(),
+  attachmentId: idField(),
 });
 
 export type ListTasksInput = z.infer<typeof listTasksSchema>;

@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+const idField = () =>
+  z.union([
+    z.number().int().positive(),
+    z
+      .string()
+      .min(1, { message: "Required" })
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val) && val > 0, {
+        message: "Must be a positive number",
+      }),
+  ]);
+
 export const relationKindSchema = z.enum([
   "unknown",
   "subtask",
@@ -16,14 +28,14 @@ export const relationKindSchema = z.enum([
 ]);
 
 export const createRelationSchema = z.object({
-  taskId: z.number().int().positive(),
-  otherTaskId: z.number().int().positive(),
+  taskId: idField(),
+  otherTaskId: idField(),
   relationKind: relationKindSchema,
 });
 
 export const deleteRelationSchema = z.object({
-  taskId: z.number().int().positive(),
-  otherTaskId: z.number().int().positive(),
+  taskId: idField(),
+  otherTaskId: idField(),
   relationKind: relationKindSchema,
 });
 

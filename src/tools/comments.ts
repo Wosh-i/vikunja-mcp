@@ -1,25 +1,37 @@
 import { z } from "zod";
 
+const idField = () =>
+  z.union([
+    z.number().int().positive(),
+    z
+      .string()
+      .min(1, { message: "Required" })
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val) && val > 0, {
+        message: "Must be a positive number",
+      }),
+  ]);
+
 export const listCommentsSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
   page: z.number().int().positive().optional(),
   per_page: z.number().int().positive().max(100).optional(),
 });
 
 export const createCommentSchema = z.object({
-  taskId: z.number().int().positive(),
+  taskId: idField(),
   comment: z.string().min(1),
 });
 
 export const updateCommentSchema = z.object({
-  taskId: z.number().int().positive(),
-  commentId: z.number().int().positive(),
+  taskId: idField(),
+  commentId: idField(),
   comment: z.string().min(1),
 });
 
 export const deleteCommentSchema = z.object({
-  taskId: z.number().int().positive(),
-  commentId: z.number().int().positive(),
+  taskId: idField(),
+  commentId: idField(),
 });
 
 export type ListCommentsInput = z.infer<typeof listCommentsSchema>;

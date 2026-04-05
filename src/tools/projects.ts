@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+const idField = () =>
+  z.union([
+    z.number().int().positive(),
+    z
+      .string()
+      .min(1, { message: "Required" })
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val) && val > 0, {
+        message: "Must be a positive number",
+      }),
+  ]);
+
 const baseProjectSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
@@ -18,7 +30,7 @@ export const listProjectsSchema = z.object({
 });
 
 export const getProjectSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: idField(),
 });
 
 export const createProjectSchema = baseProjectSchema;
@@ -30,15 +42,15 @@ export const updateProjectSchema = baseProjectSchema
   .partial();
 
 export const deleteProjectSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: idField(),
 });
 
 export const listProjectChildrenSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: idField(),
 });
 
 export const moveProjectSchema = z.object({
-  projectId: z.number().int().positive(),
+  projectId: idField(),
   parent_project_id: z
     .number()
     .int()
