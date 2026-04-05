@@ -142,11 +142,7 @@ export const projectTools: ToolDefinition[] = [
     name: "get_project",
     description: "Get a specific project by ID",
     inputSchema: z.object({
-      projectId: z.coerce
-        .number()
-        .int()
-        .positive()
-        .describe("The ID of the project"),
+      projectId: z.number().int().positive().describe("The ID of the project"),
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
@@ -538,11 +534,7 @@ export const taskTools: ToolDefinition[] = [
     name: "list_project_tasks",
     description: "List all tasks for a specific project",
     inputSchema: z.object({
-      projectId: z.coerce
-        .number()
-        .int()
-        .positive()
-        .describe("The ID of the project"),
+      projectId: z.number().int().positive().describe("The ID of the project"),
       page: z
         .number()
         .int()
@@ -603,7 +595,7 @@ export const taskTools: ToolDefinition[] = [
     name: "get_task",
     description: "Get a specific task by ID",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       expand: z
         .enum([
           "labels",
@@ -618,11 +610,7 @@ export const taskTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         expand: z
           .enum([
             "labels",
@@ -659,11 +647,7 @@ export const taskTools: ToolDefinition[] = [
     name: "create_task",
     description: "Create a new task in a project",
     inputSchema: z.object({
-      projectId: z.coerce
-        .number()
-        .int()
-        .positive()
-        .describe("The ID of the project"),
+      projectId: z.number().int().positive().describe("The ID of the project"),
       task: z
         .object({
           title: z.string().min(1).describe("Task title"),
@@ -1112,7 +1096,7 @@ export const taskTools: ToolDefinition[] = [
     name: "add_task_assignee",
     description: "Add a user as assignee to a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       user_id: z
         .number()
         .int()
@@ -1121,11 +1105,7 @@ export const taskTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         user_id: z
           .number()
           .int()
@@ -1153,7 +1133,7 @@ export const taskTools: ToolDefinition[] = [
     name: "remove_task_assignee",
     description: "Remove a user from task assignees",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       userId: z
         .number()
         .int()
@@ -1162,11 +1142,7 @@ export const taskTools: ToolDefinition[] = [
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
         userId: z
           .number()
           .int()
@@ -1193,15 +1169,11 @@ export const taskTools: ToolDefinition[] = [
     name: "list_task_assignees",
     description: "List all assignees for a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
       }),
       "inputSchema",
     ),
@@ -1223,7 +1195,7 @@ export const taskTools: ToolDefinition[] = [
     name: "add_task_label",
     description: "Add a label to a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       label_id: z
         .number()
         .int()
@@ -1264,7 +1236,7 @@ export const taskTools: ToolDefinition[] = [
     name: "remove_task_label",
     description: "Remove a label from a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       labelId: z
         .number()
         .int()
@@ -1304,15 +1276,11 @@ export const taskTools: ToolDefinition[] = [
     name: "list_task_labels",
     description: "List all labels for a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
       }),
       "inputSchema",
     ),
@@ -1374,15 +1342,11 @@ export const taskTools: ToolDefinition[] = [
     name: "list_task_relations",
     description: "List all relations for a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
     }),
     jsonSchema: zodToJsonSchema(
       z.object({
-        taskId: z.coerce
-          .number()
-          .int()
-          .positive()
-          .describe("The ID of the task"),
+        taskId: z.number().int().positive().describe("The ID of the task"),
       }),
       "inputSchema",
     ),
@@ -1605,7 +1569,7 @@ export const taskTools: ToolDefinition[] = [
     name: "delete_task_attachment",
     description: "Delete an attachment from a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       attachmentId: z
         .number()
         .int()
@@ -1653,7 +1617,7 @@ export const commentTools: ToolDefinition[] = [
     name: "list_comments",
     description: "List all comments for a specific task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       page: z
         .number()
         .int()
@@ -1714,7 +1678,7 @@ export const commentTools: ToolDefinition[] = [
     name: "create_comment",
     description: "Create a comment on a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       comment: z.string().min(1).describe("The comment text"),
     }),
     jsonSchema: zodToJsonSchema(
@@ -1749,7 +1713,7 @@ export const commentTools: ToolDefinition[] = [
     name: "update_comment",
     description: "Update a comment on a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       commentId: z.coerce
         .number()
         .int()
@@ -1792,7 +1756,7 @@ export const commentTools: ToolDefinition[] = [
     name: "delete_comment",
     description: "Delete a comment from a task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       commentId: z.coerce
         .number()
         .int()
@@ -1840,7 +1804,7 @@ export const relationTools: ToolDefinition[] = [
     name: "create_relation",
     description: "Create a relation between two tasks",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       otherTaskId: z
         .number()
         .int()
@@ -1916,7 +1880,7 @@ export const relationTools: ToolDefinition[] = [
     name: "delete_relation",
     description: "Delete a relation between two tasks",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       otherTaskId: z
         .number()
         .int()
@@ -1991,7 +1955,7 @@ export const attachmentTools: ToolDefinition[] = [
     name: "list_attachments",
     description: "List all attachments for a specific task",
     inputSchema: z.object({
-      taskId: z.coerce.number().int().positive().describe("The ID of the task"),
+      taskId: z.number().int().positive().describe("The ID of the task"),
       page: z
         .number()
         .int()

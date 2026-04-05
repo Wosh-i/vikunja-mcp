@@ -18,8 +18,8 @@ const baseTaskSchema = z.object({
 });
 
 export const listTasksSchema = z.object({
-  page: z.coerce.number().int().positive().optional(),
-  per_page: z.coerce.number().int().positive().max(100).optional(),
+  page: z.number().int().positive().optional(),
+  per_page: z.number().int().positive().max(100).optional(),
   search: z.string().optional(),
   sort_by: z.string().optional(),
   order_by: z.enum(["asc", "desc"]).optional(),
@@ -28,13 +28,13 @@ export const listTasksSchema = z.object({
 });
 
 export const listProjectTasksSchema = z.object({
-  projectId: z.coerce.number().int().positive(),
-  page: z.coerce.number().int().positive().optional(),
-  per_page: z.coerce.number().int().positive().max(100).optional(),
+  projectId: z.number().int().positive(),
+  page: z.number().int().positive().optional(),
+  per_page: z.number().int().positive().max(100).optional(),
 });
 
 export const getTaskSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
   expand: z
     .enum([
       "labels",
@@ -48,29 +48,29 @@ export const getTaskSchema = z.object({
 });
 
 export const createTaskSchema = z.object({
-  projectId: z.coerce.number().int().positive(),
+  projectId: z.number().int().positive(),
   task: baseTaskSchema,
 });
 
 export const updateTaskSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
   taskUpdates: baseTaskSchema.partial(),
 });
 
 export const deleteTaskSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const completeTaskSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const reopenTaskSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const moveTaskSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
   project_id: z
     .number()
     .int()
@@ -85,7 +85,7 @@ export const moveTaskSchema = z.object({
 });
 
 export const addTaskAssigneeSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
   user_id: z
     .number()
     .int()
@@ -94,16 +94,16 @@ export const addTaskAssigneeSchema = z.object({
 });
 
 export const removeTaskAssigneeSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
-  userId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
+  userId: z.number().int().positive(),
 });
 
 export const listTaskAssigneesSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const addTaskLabelSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
   label_id: z.coerce
     .number()
     .int()
@@ -112,12 +112,12 @@ export const addTaskLabelSchema = z.object({
 });
 
 export const removeTaskLabelSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
-  labelId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
+  labelId: z.number().int().positive(),
 });
 
 export const listTaskLabelsSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const listLabelsSchema = z.object({
@@ -130,16 +130,16 @@ export const listLabelsSchema = z.object({
 });
 
 export const listTaskRelationsSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const listSubtasksSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
 });
 
 export const deleteTaskAttachmentSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
-  attachmentId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
+  attachmentId: z.number().int().positive(),
 });
 
 export type ListTasksInput = z.infer<typeof listTasksSchema>;

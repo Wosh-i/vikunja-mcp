@@ -16,14 +16,14 @@ export const relationKindSchema = z.enum([
 ]);
 
 export const createRelationSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
-  otherTaskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
+  otherTaskId: z.number().int().positive(),
   relationKind: relationKindSchema,
 });
 
 export const deleteRelationSchema = z.object({
-  taskId: z.coerce.number().int().positive(),
-  otherTaskId: z.coerce.number().int().positive(),
+  taskId: z.number().int().positive(),
+  otherTaskId: z.number().int().positive(),
   relationKind: relationKindSchema,
 });
 
