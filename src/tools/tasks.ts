@@ -142,6 +142,19 @@ export const deleteTaskAttachmentSchema = z.object({
   attachmentId: idField(),
 });
 
+export const moveTaskToBucketSchema = z.object({
+  taskId: idField().describe("The ID of the task to move"),
+  projectId: idField().describe("The project ID"),
+  viewId: idField().describe("The project view ID (must be a kanban view)"),
+  bucketId: idField().describe("The target bucket ID"),
+  position: z
+    .number()
+    .int()
+    .nonnegative()
+    .optional()
+    .describe("Position within the bucket"),
+});
+
 export type ListTasksInput = z.infer<typeof listTasksSchema>;
 export type ListProjectTasksInput = z.infer<typeof listProjectTasksSchema>;
 export type GetTaskInput = z.infer<typeof getTaskSchema>;

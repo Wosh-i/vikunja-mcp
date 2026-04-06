@@ -42,6 +42,7 @@ import {
   listTaskRelationsSchema,
   listSubtasksSchema,
   deleteTaskAttachmentSchema,
+  moveTaskToBucketSchema,
 } from "./tasks.js";
 import {
   listCommentsSchema,
@@ -1448,6 +1449,55 @@ export const taskTools: ToolDefinition[] = [
               text: "Attachment deleted successfully",
             },
           ],
+        };
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  },
+  {
+    name: "move_task_to_bucket",
+    description: "Move a task to a different kanban bucket",
+    inputSchema: z.object({
+      taskId: idField().describe("The ID of the task to move"),
+      projectId: idField().describe("The project ID"),
+      viewId: idField().describe("The project view ID (must be a kanban view)"),
+      bucketId: idField().describe("The target bucket ID"),
+      position: z
+        .number()
+        .int()
+        .nonnegative()
+        .optional()
+        .describe("Position within the bucket"),
+    }),
+    jsonSchema: zodToJsonSchema(
+      z.object({
+        taskId: idField().describe("The ID of the task to move"),
+        projectId: idField().describe("The project ID"),
+        viewId: idField().describe(
+          "The project view ID (must be a kanban view)",
+        ),
+        bucketId: idField().describe("The target bucket ID"),
+        position: z
+          .number()
+          .int()
+          .nonnegative()
+          .optional()
+          .describe("Position within the bucket"),
+      }),
+      "inputSchema",
+    ),
+    handler: async (client, args) => {
+      try {
+        const parsed = moveTaskToBucketSchema.parse(args);
+        const result = await client.post<unknown>(
+          `/projects/${parsed.projectId}/views/${parsed.viewId}/buckets/${parsed.bucketId}/tasks/${parsed.taskId}/move`,
+          {
+            position: parsed.position,
+          },
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
         };
       } catch (error) {
         return handleError(error);
