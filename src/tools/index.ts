@@ -1491,8 +1491,10 @@ export const taskTools: ToolDefinition[] = [
       try {
         const parsed = moveTaskToBucketSchema.parse(args);
         const result = await client.post<unknown>(
-          `/projects/${parsed.projectId}/views/${parsed.viewId}/buckets/${parsed.bucketId}/tasks/${parsed.taskId}/move`,
+          `/projects/${parsed.projectId}/views/${parsed.viewId}/buckets/tasks`,
           {
+            task_id: parsed.taskId,
+            bucket_id: parsed.bucketId,
             position: parsed.position,
           },
         );
